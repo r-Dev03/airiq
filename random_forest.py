@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 
 
@@ -79,6 +79,23 @@ def main():
     y_pred_tuned = best_rf.predict(X_test)
     tuned_rmse, tuned_mape = evaluate_model(y_test, y_pred_tuned)
 
+    # ENSEMBLE LEARNING
+    #   1) Gradient boosting model
+    #   2) Simple averaged ensemble (tuned RF + gradient boosting)
+
+    gb_model = HistGradientBoostingRegressor(
+        learning_rate=0.1,
+        max_depth=10,
+        random_state=42,
+    )
+    gb_model.fit(X_train, y_train)
+    y_pred_gb = gb_model.predict(X_test)
+    gb_rmse, gb_mape = evaluate_model(y_test, y_pred_gb)
+
+    # Simple averaged ensemble of tuned RF and gradient boosting
+    y_pred_ensemble = 0.5 * y_pred_tuned + 0.5 * y_pred_gb
+    ensemble_rmse, ensemble_mape = evaluate_model(y_test, y_pred_ensemble)
+
     print("Number of training samples:", len(X_train))
     print("Number of test samples:", len(X_test))
     print()
@@ -92,12 +109,26 @@ def main():
     print("Best hyperparameters:", grid_search.best_params_)
     print(f"RMSE: {tuned_rmse:.4f}")
     print(f"MAPE: {tuned_mape:.2f}%")
+    print()
+
+    print("=== Gradient Boosting Model ===")
+    print(f"RMSE: {gb_rmse:.4f}")
+    print(f"MAPE: {gb_mape:.2f}%")
+    print()
+
+    print("=== Averaged Ensemble (Tuned RF + GB) ===")
+    print(f"RMSE: {ensemble_rmse:.4f}")
+    print(f"MAPE: {ensemble_mape:.2f}%")
 
     return (
         baseline_rmse,
         baseline_mape,
         tuned_rmse,
         tuned_mape,
+        gb_rmse,
+        gb_mape,
+        ensemble_rmse,
+        ensemble_mape,
     )
 
 
