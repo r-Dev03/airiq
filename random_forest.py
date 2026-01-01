@@ -1,7 +1,14 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+
+
+def evaluate_model(y_true, y_pred):
+    """Return RMSE and MAPE (%) for given true and predicted values."""
+    rmse = mean_squared_error(y_true, y_pred, squared=False)
+    mape = mean_absolute_percentage_error(y_true, y_pred) * 100.0
+    return rmse, mape
 
 
 def main():
@@ -35,29 +42,61 @@ def main():
         X, y, test_size=0.2, random_state=42
     )
 
-    # 4. Create and train the Random Forest model
-    rf_model = RandomForestRegressor(
+    # BASELINE RANDOM FOREST 
+    baseline_rf = RandomForestRegressor(
         n_estimators=200,
         random_state=42,
         n_jobs=-1,
     )
-    rf_model.fit(X_train, y_train)
+    baseline_rf.fit(X_train, y_train)
 
-    # 5. Predict on the test set
-    y_pred = rf_model.predict(X_test)
+    y_pred_baseline = baseline_rf.predict(X_test)
+    baseline_rmse, baseline_mape = evaluate_model(y_test, y_pred_baseline)
 
-    # 6. Evaluation metrics: RMSE and MAPE
-    rmse = mean_squared_error(y_test, y_pred, squared=False)
-    mape = mean_absolute_percentage_error(y_test, y_pred) * 100.0
+    # OPTIMIZED RANDOM FOREST 
+    rf_for_search = RandomForestRegressor(random_state=42, n_jobs=-1)
+
+    param_grid = {
+        "n_estimators": [100, 200, 300],
+        "max_depth": [None, 10, 20],
+        "min_samples_leaf": [1, 2, 4],
+        "max_features": ["sqrt", "log2"],
+    }
+
+    grid_search = GridSearchCV(
+        estimator=rf_for_search,
+        param_grid=param_grid,
+        cv=5,   # 5-fold cross validation
+        scoring="neg_root_mean_squared_error",
+        n_jobs=-1,
+        verbose=0,
+    )
+    grid_search.fit(X_train, y_train)
+    best_rf = grid_search.best_estimator_
+
+    y_pred_tuned = best_rf.predict(X_test)
+    tuned_rmse, tuned_mape = evaluate_model(y_test, y_pred_tuned)
 
     print("Number of training samples:", len(X_train))
     print("Number of test samples:", len(X_test))
-    print("First 10 predictions:", y_pred[:10])
     print()
-    print(f"RMSE: {rmse:.4f}")
-    print(f"MAPE: {mape:.2f}%")
 
-    return rmse, mape
+    print("=== Baseline Random Forest ===")
+    print(f"RMSE: {baseline_rmse:.4f}")
+    print(f"MAPE: {baseline_mape:.2f}%")
+    print()
+
+    print("=== Tuned Random Forest ===")
+    print("Best hyperparameters:", grid_search.best_params_)
+    print(f"RMSE: {tuned_rmse:.4f}")
+    print(f"MAPE: {tuned_mape:.2f}%")
+
+    return (
+        baseline_rmse,
+        baseline_mape,
+        tuned_rmse,
+        tuned_mape,
+    )
 
 
 if __name__ == "__main__":
