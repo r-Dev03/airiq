@@ -1,4 +1,4 @@
-# Three Suitable AI Algorithms - Section 1: B1
+# Three Suitable AI Algorithms - Task 1: B1
 For this project, three different algorithms were considered: linear regression, random forest regression, and a simple feed‑forward neural network. These are all supervised learning methods that can predict continuous values like air quality indices or health risk scores from pollution and weather data (Geron, 2019).
 
 ## Linear Regression
@@ -35,7 +35,7 @@ At the same time, random forest regression is not perfect, and there are a few l
 
 When the patterns in the data change a lot over time—like after new air‑quality rules, or big shifts in traffic and industry—a random forest model can start to lose accuracy. To keep it trustworthy, the model needs to be checked regularly and retrained on newer data, which lines up with the idea of continuously updating and re-calibrating the system as conditions evolve.
 
-# Evaluation Metrics - Section 1: D1
+# Evaluation Metrics - Task 1: D1
 To see how well the random forest model is performing, two evaluation metrics were used: root mean squared error (RMSE) and mean absolute percentage error (MAPE). RMSE tells us, on average, how far the predictions are from the true healthRiskScore values, using the same units as the original score, while MAPE summarizes the typical error as a percentage of the true value so it is easier to interpret across different ranges.
 
 
@@ -45,14 +45,14 @@ When evaluated on the test set, the random forest model achieved an RMSE of abou
 ## Area for improvement - D3
 One thing that could make this model better is doing a more careful round of tuning instead of mostly sticking with the default settings. Trying different numbers of trees, changing how deep the trees can grow, and adjusting how many samples are needed in each leaf could help lower both RMSE and MAPE. Another improvement would be to include some simple time‑based features, like averages of key pollutants over the last few days, so the model can better reflect the effect of ongoing exposure rather than looking at only a single day at a time.
 
-# Evaluation Metrics - Section 2: C1
+# Evaluation Metrics - Task 2: C1
 To evaluate the optimized models, the same two metrics from Task 1 were used: root mean squared error (RMSE) and mean absolute percentage error (MAPE). RMSE shows, on average, how far the predictions are from the true healthRiskScore values, while MAPE expresses that error as a percentage of the actual score, which makes it easier to compare performance across different risk levels.
 
 ## Comparison - C2
 On the test set, the baseline random forest had an RMSE of 0.1551 and a MAPE of 1.14%. The tuned random forest, even after hyperparameter search and added regularization, ended up with a higher RMSE of 0.1896 and a MAPE of 1.42%, so it did not improve on the original model for this dataset, which can happen when tuning increases variance more than it reduces bias (Geron, 2019). The gradient boosting model performed slightly worse than the baseline on RMSE (0.1577) but slightly better on MAPE (1.19%), and the averaged ensemble of the tuned random forest and gradient boosting landed in between, with an RMSE of 0.1614 and a MAPE of 1.22%. Taken together, these results show that the original random forest still gives the best overall accuracy here, but experimenting with boosting and simple ensembling provides alternative models that come close and could be useful if the data or business priorities change (for example, if percentage error becomes more important than absolute error) (Pedregosa et al., 2011).
 
 
-# Optimization techniques - Section 2: D1
+# Optimization techniques - Task 2: D1
 Two optimization techniques were applied to the random forest model: hyperparameter tuning with GridSearchCV and 5‑fold cross‑validation. GridSearchCV was used to search over key hyperparameters such as the number of trees (n_estimators) and the number of features considered at each split (max_features), which are known to strongly influence the performance of random forests (Pedregosa et al., 2011). Using 5‑fold cross‑validation within this search provided a more reliable estimate of how each hyperparameter setting would generalize to unseen data than a single train–test split, which is a standard practice when tuning ensemble models (Geron, 2019)
 
 ## Why these regularization methods - D2
