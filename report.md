@@ -1,14 +1,14 @@
 # Three Suitable AI Algorithms
-For this project, three different algorithms were considered: linear regression, random forest regression, and a simple feed‑forward neural network. These are all supervised learning methods that can predict continuous values like air quality indices or health risk scores from pollution and weather data.
+For this project, three different algorithms were considered: linear regression, random forest regression, and a simple feed‑forward neural network. These are all supervised learning methods that can predict continuous values like air quality indices or health risk scores from pollution and weather data (Geron, 2019).
 
 ## Linear Regression
-Linear regression is the most straightforward option. It assumes there is a mostly linear relationship between inputs such as PM2.5, NO2, CO2, temperature, humidity, and wind speed, and the target value we want to predict. Because of that assumption, it is fast to train, easy to understand, and its coefficients can be interpreted directly, which is helpful when explaining which variables have the strongest influence.
+Linear regression is the most straightforward option. It assumes there is a mostly linear relationship between inputs such as PM2.5, NO2, CO2, temperature, humidity, and wind speed, and the target value we want to predict (Geron, 2019). Because of that assumption, it is fast to train, easy to understand, and its coefficients can be interpreted directly, which is helpful when explaining which variables have the strongest influence (Geron, 2019).
 
 ## Random Forest Regression
-Random forest regression is a more flexible approach. It builds many decision trees on different random subsets of the data and then averages their predictions. This lets the model capture nonlinear relationships and interactions, for example when certain combinations of temperature and pollution levels drive risk more than any single variable by itself. It also tends to be more robust than a single decision tree and usually handles noisy sensor readings reasonably well.
+Random forest regression is a more flexible approach. It builds many decision trees on different random subsets of the data and then averages their predictions, which is a standard ensemble strategy for random forests (Pedregosa et al., 2011; scikit‑learn, n.d.-a). This lets the model capture nonlinear relationships and interactions—for example, when certain combinations of temperature and pollution levels drive risk more than any single variable by itself—and helps reduce overfitting compared with a single tree (Pedregosa et al., 2011). It also tends to be more robust than an individual decision tree and usually handles noisy sensor readings reasonably well, which is why random forests are widely used on tabular environmental data (scikit‑learn, n.d.-b).
 
 ## Feed-Forward Neural Network
-The feed‑forward neural network is the most flexible of the three. It uses multiple layers of connected “neurons” to learn complex patterns in the data. Given historical pollution and weather conditions, it can learn how certain combinations and ranges of these inputs relate to higher or lower health risk scores. It can also be extended later to incorporate more features or time‑windowed inputs for forecasting tasks.
+The feed‑forward neural network is the most flexible of the three. It uses multiple layers of connected “neurons” to learn complex nonlinear patterns in the data (Goodfellow et al., 2016). Given historical pollution and weather conditions, it can learn how certain combinations and ranges of these inputs relate to higher or lower health risk scores, taking advantage of its capacity as a universal function approximator (Goodfellow et al., 2016). It can also be extended later to incorporate more features or time‑windowed inputs for forecasting tasks, which is a common way deep feed‑forward networks are applied to time‑related prediction problems (Goodfellow et al., 2016).​
 
 *Random Forest Regression* was chosen as the main algorithm. It strikes a good balance between accuracy, robustness, and interpretability for this air quality and health risk prediction problem.
 
@@ -35,3 +35,12 @@ At the same time, random forest regression is not perfect, and there are a few l
 
 When the patterns in the data change a lot over time—like after new air‑quality rules, or big shifts in traffic and industry—a random forest model can start to lose accuracy. To keep it trustworthy, the model needs to be checked regularly and retrained on newer data, which lines up with the idea of continuously updating and re-calibrating the system as conditions evolve.
 
+# Evaluation Metrics
+To see how well the random forest model is performing, two evaluation metrics were used: root mean squared error (RMSE) and mean absolute percentage error (MAPE). RMSE tells us, on average, how far the predictions are from the true healthRiskScore values, using the same units as the original score, while MAPE summarizes the typical error as a percentage of the true value so it is easier to interpret across different ranges.
+
+
+# Analysis of results
+When evaluated on the test set, the random forest model achieved an RMSE of about 0.1551 and a MAPE of roughly 1.14%. This means the predicted health risk scores are, on average, very close to the actual scores, with typical errors of only about 1.14% relative to the true values. These results suggest that the model is capturing the main relationships between pollution, weather conditions, and health risk, although some error remains, particularly on days when the risk is unusually high or low.
+
+# Area for improvement
+One thing that could make this model better is doing a more careful round of tuning instead of mostly sticking with the default settings. Trying different numbers of trees, changing how deep the trees can grow, and adjusting how many samples are needed in each leaf could help lower both RMSE and MAPE. Another improvement would be to include some simple time‑based features, like averages of key pollutants over the last few days, so the model can better reflect the effect of ongoing exposure rather than looking at only a single day at a time.
