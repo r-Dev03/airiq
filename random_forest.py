@@ -53,7 +53,9 @@ def main():
     y_pred_baseline = baseline_rf.predict(X_test)
     baseline_rmse, baseline_mape = evaluate_model(y_test, y_pred_baseline)
 
-    # OPTIMIZED RANDOM FOREST 
+    # OPTIMIZED / REGULARIZED RANDOM FOREST 
+    #   - Optimization: GridSearchCV over hyperparameters with 5-fold CV
+    #   - Regularization: constrain model complexity with max_depth and min_samples_leaf
     rf_for_search = RandomForestRegressor(random_state=42, n_jobs=-1)
 
     param_grid = {
@@ -66,7 +68,7 @@ def main():
     grid_search = GridSearchCV(
         estimator=rf_for_search,
         param_grid=param_grid,
-        cv=5,   # 5-fold cross validation
+        cv=5,
         scoring="neg_root_mean_squared_error",
         n_jobs=-1,
         verbose=0,
@@ -86,7 +88,7 @@ def main():
     print(f"MAPE: {baseline_mape:.2f}%")
     print()
 
-    print("=== Tuned Random Forest ===")
+    print("=== Tuned Random Forest (Optimization + Regularization) ===")
     print("Best hyperparameters:", grid_search.best_params_)
     print(f"RMSE: {tuned_rmse:.4f}")
     print(f"MAPE: {tuned_mape:.2f}%")
