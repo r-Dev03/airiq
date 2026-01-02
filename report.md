@@ -72,3 +72,17 @@ RMSE and MAPE were used again so the new models could be compared fairly to the 
 
 ### The results and what they mean - D5
 Overall, the experiments showed that the original random forest still gave the best overall accuracy on the test set, with the lowest RMSE and MAPE of the models that were tried. The tuned random forest, gradient boosting model, and averaged ensemble all came reasonably close, but none of them consistently beat the baseline, which is a good reminder that more complex setups do not always produce better results on new data (Geron, 2019). From a business point of view, this means the baseline random forest is already a strong and reliable choice for predicting daily health risk, while the boosted and ensemble models provide tested alternatives that could be useful later if the data change or if decision‑makers start to care more about certain aspects of error, such as percentage error rather than absolute error.
+
+
+# Task 3
+
+### Key variables and how they look - A1
+For this part of the analysis, the focus is on three main variables in the DQN1 dataset: age, daily activity level, and healthRiskScore. Most people in the data are in the middle‑age range, with fewer very young or very old individuals, which affects how strongly age shows up in the risk scores. Daily activity varies a lot: many records show low activity, with a smaller group showing very high activity, suggesting people have very different daily routines. The healthRiskScore is mostly in a moderate range but has a clear group of higher scores, meaning most people are at moderate risk, while a smaller group appears to be at higher risk and may need more attention.
+
+### Patterns that stand out - A2
+Looking at these variables together, two patterns show up clearly. First, people or days with higher activity levels generally have lower healthRiskScore values, while very low activity is seen more often when the risk score is high. In simple terms, the least active records tend to have above‑average risk scores, which fits the idea that being inactive is linked to higher health risk in this dataset.
+
+Second, age and healthRiskScore tend to move in the same direction: older individuals are more likely to appear in the higher‑risk range, even when their activity levels look similar to those of younger people. Within age groups, older adults usually show higher typical (median) risk scores than younger adults, suggesting that age‑related factors add to the impact of daily behavior on overall health risk.
+
+### Hypothesis - A3
+Putting these patterns together leads to a clear hypothesis: daily activity changes how strongly age affects the healthRiskScore. As age increases, the healthRiskScore tends to go up, but people who stay more active usually have lower risk than less active people of the same age. This points to the idea that regular physical activity may help offset some of the age‑related increase in health risk, especially for older adults who might otherwise end up in the highest‑risk group.
