@@ -106,3 +106,23 @@ The outputs from the optimized model can be used to support several kinds of dec
 Second, because the model relies heavily on daily activity and baseline health, it points directly to where prevention programs are likely to have the biggest impact. Programs that encourage people to be more active or improve key health indicators should, over time, show up as lower predicted risk scores, and changes in those scores can be used as one way to track whether the programs are working.
 
 Finally, tracking how the model performs for different groups can guide future improvements to the model. If certain subgroups still show higher errors or risk patterns that do not match expectations, that is a sign that additional information—like sleep quality, stress, or medication adherence—might be useful to collect and include in future versions, creating a cycle where real‑world use leads to better data and better predictions over time.
+
+
+# Task 4 
+
+### Strategies to adapt solution 
+When it comes to adapting the current solution, the idea is to reuse the optimized health‑risk model from Task 2 in an employer wellness program instead of the original case‑study setting. To do that, the first step would be to line up the model inputs with data that an employer can realistically collect, such as age, results from basic health screenings, short self‑reported health surveys, and activity data from wearables or wellness apps. The data‑prep steps would need to be adjusted so the model can handle more frequent, time‑stamped activity data and some missing or self‑reported values, while still keeping the same overall modeling approach that worked well in Task 2.
+
+Since this would be used in a workplace, there are also some extra constraints that need to be built into the design. The adapted solution should include stronger privacy protections, clear employee consent, and some limits on which features are used so obviously sensitive or potentially discriminatory information is not part of the model. In practice, that means focusing on behavior and general health indicators, anonymizing or aggregating data where possible, and avoiding features like detailed diagnoses or very personal attributes that are not needed for a wellness program
+
+### Rationale
+These changes are mainly about making the model realistic to deploy in a wellness setting without throwing away what was learned from the original health‑risk prediction task. Employers usually have access to screenings, surveys, and activity data, but they do not always have full clinical histories, so shifting the feature set toward those inputs lets the same kind of model be reused with data that actually exists in this new context. Updating the preprocessing for noisier and partially self‑reported data helps keep the model’s performance reasonable when the data is less controlled than it was in the original case study.
+
+Focusing on privacy, consent, and fair feature choice also matters for trust and adoption. Wellness programs tend to work better when employees feel the data is being used to support them instead of being used against them. By being clear about what data is included, how it is protected, and how predictions will be used, the adapted model is more likely to be accepted by both employees and program leaders, which makes it more likely the solution will actually be used instead of just staying on paper.
+
+### Potential impact
+If the model is adapted this way, it could give an employer wellness program a practical way to spot people who might need a little more support, such as coaching, follow‑up messages, or invites to specific wellness activities, without relying on full medical records. Because the model from Task 2 already works with structured data, it should scale to large groups of employees by running on a schedule (for example, weekly or monthly) and updating risk scores in the background. Those scores could then be surfaced in simple dashboards or reports inside the tools the wellness team already uses, making it easier for them to decide who to reach out to and when.
+
+There would still need to be a re‑evaluation step using data from the employer setting to see how well the adapted model performs and to adjust what “higher risk” means for that particular program. The company would also have to stay within any relevant regulations and internal policies around health and employment data by limiting access to the scores, being clear about how predictions are used, and keeping participation voluntary so the model supports wellness goals without creating legal or ethical issues.
+
+
