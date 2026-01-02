@@ -37,7 +37,7 @@ At the same time, random forest regression is not perfect, and there are a few l
 
   - Random forests are less transparent than a simple linear model. Even though tools like feature importance and partial dependence plots help, it is still harder to explain an individual prediction from an ensemble of trees to non‑technical stakeholders.
 
-When the patterns in the data change a lot over time—like after new air‑quality rules, or big shifts in traffic and industry—a random forest model can start to lose accuracy. To keep it trustworthy, the model needs to be checked regularly and retrained on newer data, which lines up with the idea of continuously updating and re-calibrating the system as conditions evolve.
+When the patterns in the data change a lot over time—like after new air‑quality rules, or big shifts in traffic and industry—a random forest model can start to lose accuracy. To keep it trustworthy, the model needs to be checked regularly and retrained on newer data, which lines up with the idea of continuously updating and recalibrating the system as conditions evolve.
 
 ### Evaluation Metrics - D1
 To see how well the random forest model is performing, two evaluation metrics were used: root mean squared error (RMSE) and mean absolute percentage error (MAPE). RMSE tells us, on average, how far the predictions are from the true healthRiskScore values, using the same units as the original score, while MAPE summarizes the typical error as a percentage of the true value so it is easier to interpret across different ranges.
@@ -86,3 +86,23 @@ Second, age and healthRiskScore tend to move in the same direction: older indivi
 
 ### Hypothesis - A3
 Putting these patterns together leads to a clear hypothesis: daily activity changes how strongly age affects the healthRiskScore. As age increases, the healthRiskScore tends to go up, but people who stay more active usually have lower risk than less active people of the same age. This points to the idea that regular physical activity may help offset some of the age‑related increase in health risk, especially for older adults who might otherwise end up in the highest‑risk group.
+
+
+### Metrics - B1
+For the optimized model from Task 2, accuracy, precision, recall, and F1 score were used to see how well it identifies higher‑risk cases and whether it would work in a real setting. Accuracy gives a quick overall view of how often the model is right, but it can be misleading if most people in the dataset are low risk. That is why precision and recall matter: precision shows how often a “high‑risk” prediction is actually correct, and recall shows how many of the true high‑risk cases the model is able to catch. The F1 score combines precision and recall into one number, which makes it easier to judge whether the model balances missed high‑risk cases and false alarms in a reasonable way.
+
+Looking at these four metrics together, the optimized model appears to be both generally accurate and reasonably focused on the people most likely to be high risk. This makes the model useful for decisions like who should get extra follow‑up, closer monitoring, or early outreach instead of treating everyone the same.
+
+
+### Model behavior - B2
+The way the model makes its predictions also offers some helpful insights. The feature importance values (or similar explanation outputs) show that daily activity and baseline health measures have the strongest influence on the predicted risk scores. This matches what shows up in the data exploration and suggests that improving these factors should directly lower predicted risk over time.
+
+Age and chronic‑condition indicators also play a noticeable role, but their impact tends to be more gradual, nudging risk up or down rather than causing sudden jumps. This fits how long‑term health usually behaves: older adults and people with ongoing conditions slowly accumulate more risk, even when their daily activity looks reasonable, which supports steady monitoring and long‑term management for these groups. At the extremes, very low activity or poor baseline health push the predicted risk sharply higher, even when some other variables look better, which makes these combinations clear “red flags” for teams to watch more closely.
+
+
+### Model outputs -  B3
+The outputs from the optimized model can be used to support several kinds of decisions. First, the predicted risk scores make it possible to rank or group individuals by risk level so that limited time and resources can be focused on those with the highest predicted risk, rather than spreading effort evenly across everyone. This helps direct coaching, reminders, or follow‑up to the people who are most likely to benefit from them.
+
+Second, because the model relies heavily on daily activity and baseline health, it points directly to where prevention programs are likely to have the biggest impact. Programs that encourage people to be more active or improve key health indicators should, over time, show up as lower predicted risk scores, and changes in those scores can be used as one way to track whether the programs are working.
+
+Finally, tracking how the model performs for different groups can guide future improvements to the model. If certain subgroups still show higher errors or risk patterns that do not match expectations, that is a sign that additional information—like sleep quality, stress, or medication adherence—might be useful to collect and include in future versions, creating a cycle where real‑world use leads to better data and better predictions over time.
