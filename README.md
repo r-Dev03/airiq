@@ -239,8 +239,6 @@ y_pred_ensemble = 0.5 * y_pred_rf + 0.5 * y_pred_gb
 
 The project uses `DQN1 Dataset.xlsx` containing air quality and environmental measurements with corresponding health risk scores.
 
-**Note:** Dataset is not included in this repository. Contact project maintainer for access.
-
 ## License
 
 MIT License - see LICENSE file for details
