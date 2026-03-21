@@ -48,7 +48,7 @@ python --version
 ### Option 1: Standard Python Setup
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/airiq.git
+git clone https://github.com/r-Dev03/airiq.git
 cd airiq
 
 # Install dependencies
@@ -72,7 +72,7 @@ nix develop
 
 ### Running the Model
 ```bash
-# Make sure DQN1 Dataset.xlsx is in the same directory
+# Make sure dataset.xlsx is in the same directory
 python random_forest.py
 ```
 
@@ -150,9 +150,7 @@ Two-model ensemble:
 ```
 airiq/
 ├── random_forest.py         # Main training and evaluation script
-├── DQN1 Dataset.xlsx        # Input data
-├── DQN1 Case Study.docx     # Project documentation
-├── report.md                # Project report
+├── dataset.xlsx             # Input data
 ├── flake.nix                # Nix development environment
 ├── flake.lock               # Nix lock file
 ├── README.md
@@ -164,7 +162,7 @@ airiq/
 The implementation is straightforward:
 ```python
 # Load data
-data = pd.read_excel("DQN1 Dataset.xlsx")
+data = pd.read_excel("dataset.xlsx")
 
 # Split features/target
 X = data[feature_cols]
@@ -203,46 +201,19 @@ y_pred_ensemble = 0.5 * y_pred_rf + 0.5 * y_pred_gb
 
 ## Limitations
 
-**Current Constraints:**
 - Fixed 80/20 train/test split (no k-fold CV for final evaluation)
 - Simple ensemble averaging (no weighted or stacking approaches)
 - No feature engineering beyond provided dataset
 - No time-series considerations (treats data as i.i.d.)
 - Excel-only data input
-
-**Model Limitations:**
 - Tuned model performed worse than baseline (overfitting)
 - No cross-validation for gradient boosting hyperparameters
 - Fixed ensemble weights (0.5/0.5) without optimization
 
-## Future Enhancements
-
-**Model Improvements:**
-- Feature engineering (interactions, polynomials, lag features)
-- More sophisticated ensemble methods (stacking, boosting)
-- Deep learning approaches (neural networks)
-- Time-series modeling if temporal patterns exist
-
-**Technical Improvements:**
-- Cross-validation for final model evaluation
-- Hyperparameter tuning for gradient boosting
-- Automated model selection
-- Feature importance analysis visualization
-
-**Production Features:**
-- CSV/JSON data input support
-- Model persistence (save/load trained models)
-- API endpoint for predictions
-- Visualization dashboard for predictions and feature importance
-
 ## Dataset
 
-The project uses `DQN1 Dataset.xlsx` containing air quality and environmental measurements with corresponding health risk scores.
+The project uses `dataset.xlsx` containing air quality and environmental measurements with corresponding health risk scores.
 
 ## License
 
 MIT License - see LICENSE file for details
-
----
-
-*A demonstration of machine learning model optimization, regularization, and ensemble methods for environmental health risk prediction.*

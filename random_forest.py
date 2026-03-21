@@ -13,7 +13,7 @@ def evaluate_model(y_true, y_pred):
 
 def main():
     # 1. Load the dataset
-    data = pd.read_excel("DQN1 Dataset.xlsx")
+    data = pd.read_excel("dataset.xlsx")
 
     # 2. Define features and target
     feature_cols = [
