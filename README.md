@@ -1,219 +1,63 @@
 # AirIQ
 
-**Machine Learning-Based Air Quality and Health Risk Prediction**
+**Predicting health risk scores from air quality and weather data with ensemble machine learning.**
 
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-latest-orange.svg)](https://scikit-learn.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.4+-orange.svg)](https://scikit-learn.org/)
 
-## Overview
+## Results
 
-AirIQ is a machine learning project that predicts health risk scores based on air quality and environmental data. Using ensemble methods with Random Forest and Gradient Boosting, it demonstrates model optimization through hyperparameter tuning and regularization techniques.
+| Model | RMSE | MAPE |
+|-------|------|------|
+| Naive baseline (always predicts the training mean) | 0.6742 | 5.70% |
+| **Random Forest** | **0.1551** | **1.14%** |
+| Random Forest, tuned with GridSearchCV | 0.1896 | 1.42% |
+| Gradient Boosting | 0.1577 | 1.19% |
+| Averaged ensemble (tuned RF + GB) | 0.1614 | 1.22% |
 
-**Key Results:**
-- Baseline Random Forest: RMSE 0.1551, MAPE 1.14%
-- Tuned Random Forest: RMSE 0.1896, MAPE 1.42%
-- Gradient Boosting: RMSE 0.1577, MAPE 1.19%
-- Ensemble Average: RMSE 0.1614, MAPE 1.22%
+The Random Forest cuts MAPE by **80% relative to the naive baseline** (RMSE by 77%), with an R² of **0.95** on held-out data. The baseline and R² were computed separately on the same train/test split.
 
-## Problem Statement
+## Highlights
 
-Urban air quality affects public health, but predicting health risk from environmental factors requires analyzing multiple variables simultaneously. This project demonstrates how machine learning can predict health risk scores from air quality metrics and weather conditions.
+- Models health risk scores from 14 air quality, weather, and calendar features with a Random Forest regressor
+- Measures every model against a naive mean baseline, so the error numbers have context
+- Benchmarks GridSearchCV tuning (5-fold cross-validation), gradient boosting, and an averaged ensemble to select the final model
 
-## Tech Stack
+## How It Works
 
-- **Python 3.8+**
-- **scikit-learn** - Random Forest, Gradient Boosting, GridSearchCV
-- **pandas** - Data loading and manipulation
-- **openpyxl** - Excel file reading
+**Features (14):** PM2.5, NO2, and CO2; temperature, humidity, wind speed, pressure, cloud cover, visibility, solar radiation, and UV index; month, day of week, and a weekend flag.
 
-## Data Features
+**Pipeline:** load the data, split it 80/20 into train and test sets, then train and compare four models:
+1. **Baseline Random Forest:** 200 trees with scikit-learn defaults
+2. **Tuned Random Forest:** GridSearchCV over `n_estimators`, `max_depth`, `min_samples_leaf`, and `max_features`, with 5-fold cross-validation
+3. **Gradient Boosting:** `HistGradientBoostingRegressor`
+4. **Ensemble:** the average of the tuned Random Forest and Gradient Boosting predictions
 
-**Input Features (14 total):**
-- **Air Quality:** PM2.5, NO2, CO2
-- **Weather:** Temperature, humidity, wind speed, pressure, cloud cover, visibility, solar radiation, UV index
-- **Temporal:** Month, day of week, weekend flag
+### Why the baseline matters
+Health risk scores in this dataset only range from about 8.5 to 11.5, so even a model that always predicts the average scores 5.70% MAPE. On its own, a 1.14% MAPE says little. Compared against that baseline, it represents an 80% reduction in error.
 
-**Target Variable:**
-- Health risk score (continuous value)
+### Why tuning made the model worse
+The default Random Forest considers all 14 features at every split (`max_features=1.0`). The search grid only tried `"sqrt"` and `"log2"`, which both limit each split to 3 of the 14 features, so the search could never reproduce the baseline's configuration. GridSearchCV chose the least-constrained depth and leaf settings available, and the result still trailed the default. The gap most likely comes from the search space, not overfitting.
 
-## Installation
+## Getting Started
 
-### Prerequisites
 ```bash
-# Python 3.8 or higher
-python --version
-```
-
-### Option 1: Standard Python Setup
-```bash
-# Clone repository
 git clone https://github.com/r-Dev03/airiq.git
 cd airiq
-
-# Install dependencies
-pip install pandas scikit-learn openpyxl
-```
-
-### Option 2: Nix Development Environment
-```bash
-# If you use Nix
-nix develop
-
-# Dependencies are automatically available
-```
-
-**Required packages:**
-- pandas
-- scikit-learn
-- openpyxl (for reading Excel files)
-
-## Usage
-
-### Running the Model
-```bash
-# Make sure dataset.xlsx is in the same directory
+pip install pandas "scikit-learn>=1.4" openpyxl
 python random_forest.py
 ```
 
-### Expected Output
-```
-Number of training samples: 2611
-Number of test samples: 653
+Or, with Nix: `nix develop`, then `python random_forest.py`.
 
-=== Baseline Random Forest ===
-RMSE: 0.1551
-MAPE: 1.14%
+The script prints the train/test sizes, the best hyperparameters found, and RMSE and MAPE for each model.
 
-=== Tuned Random Forest (Optimization + Regularization) ===
-Best hyperparameters: {'max_depth': 20, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'n_estimators': 300}
-RMSE: 0.1896
-MAPE: 1.42%
+## Tech Stack
 
-=== Gradient Boosting Model ===
-RMSE: 0.1577
-MAPE: 1.19%
+Python · scikit-learn · pandas · openpyxl
 
-=== Averaged Ensemble (Tuned RF + GB) ===
-RMSE: 0.1614
-MAPE: 1.22%
-```
+## Known Limitations
 
-## Technical Approach
-
-### 1. Baseline Model
-
-Simple Random Forest with default hyperparameters:
-- 200 estimators
-- No depth limit
-- Establishes performance baseline
-
-### 2. Hyperparameter Tuning
-
-GridSearchCV with 5-fold cross-validation:
-```python
-param_grid = {
-    "n_estimators": [100, 200, 300],
-    "max_depth": [None, 10, 20],
-    "min_samples_leaf": [1, 2, 4],
-    "max_features": ["sqrt", "log2"],
-}
-```
-
-**Optimization Goal:** Minimize RMSE through systematic hyperparameter search
-
-### 3. Regularization
-
-Constrain model complexity to prevent overfitting:
-- `max_depth`: Limit tree depth
-- `min_samples_leaf`: Require minimum samples per leaf node
-
-### 4. Ensemble Learning
-
-Two-model ensemble:
-- Tuned Random Forest (optimized via GridSearch)
-- Histogram-based Gradient Boosting
-- **Combination:** Simple averaging (0.5 * RF + 0.5 * GB)
-
-## Model Comparison
-
-| Model | RMSE | MAPE | Notes |
-|-------|------|------|-------|
-| Baseline RF | 0.1551 | 1.14% | Best single model |
-| Tuned RF | 0.1896 | 1.42% | More complex, slightly overfit |
-| Gradient Boosting | 0.1577 | 1.19% | Sequential error correction |
-| Ensemble Average | 0.1614 | 1.22% | Balanced approach |
-
-**Key Insight:** Baseline Random Forest achieved the best performance, suggesting the default hyperparameters were well-suited for this dataset. The tuned model's higher error indicates overfitting despite regularization attempts.
-
-## Project Structure
-```
-airiq/
-├── random_forest.py         # Main training and evaluation script
-├── dataset.xlsx             # Input data
-├── flake.nix                # Nix development environment
-├── flake.lock               # Nix lock file
-├── README.md
-└── LICENSE
-```
-
-## Code Overview
-
-The implementation is straightforward:
-```python
-# Load data
-data = pd.read_excel("dataset.xlsx")
-
-# Split features/target
-X = data[feature_cols]
-y = data[target_col]
-
-# Train/test split (80/20)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-# Train baseline model
-baseline_rf = RandomForestRegressor(n_estimators=200)
-baseline_rf.fit(X_train, y_train)
-
-# Optimize with GridSearchCV
-grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=5)
-grid_search.fit(X_train, y_train)
-
-# Train gradient boosting
-gb_model = HistGradientBoostingRegressor()
-gb_model.fit(X_train, y_train)
-
-# Ensemble predictions
-y_pred_ensemble = 0.5 * y_pred_rf + 0.5 * y_pred_gb
-```
-
-## Evaluation Metrics
-
-**RMSE (Root Mean Squared Error):**
-- Measures average prediction error
-- Lower is better
-- Penalizes large errors more heavily
-
-**MAPE (Mean Absolute Percentage Error):**
-- Percentage-based error metric
-- Easier to interpret (e.g., "1.14% average error")
-- Lower is better
-
-## Limitations
-
-- Fixed 80/20 train/test split (no k-fold CV for final evaluation)
-- Simple ensemble averaging (no weighted or stacking approaches)
-- No feature engineering beyond provided dataset
-- No time-series considerations (treats data as i.i.d.)
-- Excel-only data input
-- Tuned model performed worse than baseline (overfitting)
-- No cross-validation for gradient boosting hyperparameters
-- Fixed ensemble weights (0.5/0.5) without optimization
-
-## Dataset
-
-The project uses `dataset.xlsx` containing air quality and environmental measurements with corresponding health risk scores.
-
-## License
-
-MIT License - see LICENSE file for details
+- **Single train/test split.** Final scores come from one 80/20 split rather than cross-validated scores.
+- **Narrow tuning grid.** The grid didn't include `max_features=1.0`, so the search couldn't reproduce the default model's configuration.
+- **Small, partly synthetic dataset.** The 1,000-row dataset contains physically impossible values (such as negative precipitation), and `month` is constant, so results may not carry over to real sensor data.
